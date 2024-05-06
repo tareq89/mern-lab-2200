@@ -42,9 +42,9 @@ function addTodo() {
     todoInput.value = "";
 
     // Append the elements to the list item
-    todoList.appendChild(li);
     li.appendChild(span);
     li.appendChild(buttonsDiv);
+    todoList.appendChild(li);
   }
 }
 
