@@ -1,33 +1,52 @@
 import React, { useState } from "react";
+import { Loader } from "./Loader/Loader";
+import { Modal } from "./Modal";
+import { Form } from "./Form/Form";
 
-export const Table = ({ data, onDelete }) => {
-  const [name, setName] = useState("Tareq");
-
+const EditButton = ({ data }) => {
+  const [isOpenModal, setIsOpenModal] = useState(false);
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Gender</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((x, i) => {
-          return (
-            <tr key={i}>
-              <td>{x.firstName}</td>
-              <td>{x.lastName}</td>
-              <td>{x.gender}</td>
-              <td>
-                <button>Edit</button>
-                <button onClick={() => onDelete(x.id)}>Delete</button>
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+    <>
+      <Modal isOpen={isOpenModal} onClose={() => setIsOpenModal(false)}>
+        <Form formData={data} />
+      </Modal>
+      <button onClick={() => setIsOpenModal(true)}>Edit</button>
+    </>
+  );
+};
+
+export const Table = ({ data, onDelete, isLoading }) => {
+  if (isLoading) return <Loader />;
+  return (
+    <>
+      {data && <h1>Total found {data.length}</h1>}
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Nationality</th>
+            <th>Degree</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((x, i) => {
+            return (
+              <tr key={i}>
+                <td>{x.name}</td>
+                <td>{x.gender}</td>
+                <td>{x.nationality}</td>
+                <td>{x.degree.toString()}</td>
+                <td>
+                  <EditButton data={x} />
+                  <button onClick={() => onDelete(x.id)}>Delete</button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
   );
 };

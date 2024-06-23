@@ -1,66 +1,78 @@
 import React, { useEffect, useState } from "react";
-import { SearchForm } from "./SearchForm";
+import { Form } from "./Form/Form";
 import { Table } from "./Table";
-import { Loader } from "./Loader";
+import { getPerons, deletePerson } from "../api";
+import { Modal } from "./Modal";
 
-const mockApi = () => {
-  const data = [
-    {
-      id: "23454234534543342342114543",
-      firstName: "Tareq",
-      lastName: "Aziz",
-      gender: "Male",
-    },
-    {
-      id: "23454234rergerg5345432114543",
-      firstName: "Asheq",
-      lastName: "Seum",
-      gender: "Male",
-    },
-    {
-      id: "2345423453454ghjghjg32114543",
-      firstName: "Shabnam",
-      lastName: "Mushtari",
-      gender: "Female",
-    },
-  ];
-
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(data);
-    }, 3 * 1000);
-  });
-};
 export const Main = () => {
-  const [data, setdata] = useState([]);
+  const [data, setData] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    gender: "Male",
+    nationality: "",
+    degree: [],
+  });
 
-  useEffect(() => {
+  const loadData = () => {
     setIsLoading(true);
-    const resultPromise = mockApi();
-    resultPromise
+    getPerons(formData)
       .then((response) => {
-        setdata(response);
+        setData(response);
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
-
-  const onDelete = (id) => {
-    setdata(
-      data.filter((x) => {
-        return x.id !== id;
-      })
-    );
+      .finally(() => setIsLoading(false));
   };
 
-  if (isLoading) return <Loader />;
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const onSubmitttt = (e) => {
+    e.preventDefault();
+    console.log(formData);
+    loadData();
+  };
+
+  const onChangeeee = (e) => {
+    let checkBoxValues = formData.degree;
+    const generateCheckboxValue = ({ checked, value }) => {
+      if (checked) {
+        checkBoxValues = [...checkBoxValues, value];
+      } else {
+        checkBoxValues = checkBoxValues.filter((x) => x !== value);
+      }
+      return checkBoxValues;
+    };
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.type === "checkbox" ? generateCheckboxValue(e.target) : e.target.value,
+    });
+  };
+
+  const onDelete = (id) => {
+    deletePerson(id).then((response) => {
+      if (response.isDeleted) loadData();
+    });
+  };
 
   return (
     <div id="main">
-      <SearchForm />
-      <Table data={data} onDelete={onDelete} />
+      <Form
+        formData={formData}
+        onChangeeee={onChangeeee}
+        onSubmitttt={onSubmitttt}
+        reset={() => {
+          setFormData({
+            name: "",
+            gender: "",
+            nationality: "",
+            degree: [],
+          });
+        }}
+      />
+
+      <Table data={data} onDelete={onDelete} isLoading={isLoading} />
     </div>
   );
 };
