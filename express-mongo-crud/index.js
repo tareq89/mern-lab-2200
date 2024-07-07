@@ -2,11 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const mockData = require("./mockData");
-const { setupDB } = require("./setupDB");
+// const mockData = require("./mockData");
 
+const { setupDB } = require("./setupDB");
 const registerPersonControllers = require("./controllers/person");
 const { registerAuthenticationControllers } = require("./controllers/authentication");
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -23,6 +24,7 @@ mongoose.connect(
     useUnifiedTopology: true,
   }
 );
+
 setupDB();
 registerAuthenticationControllers(app);
 registerPersonControllers(app);

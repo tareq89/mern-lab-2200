@@ -3,15 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../api";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
     try {
-      await login({ email, password });
-      navigate("/home");
+      const response = await login({ username, password });
+      if (response.success) {
+        navigate("/home");
+      } else {
+        setErrorMessage("Login not successful!");
+      }
     } catch (error) {
       console.error("Login failed", error);
     }
@@ -20,10 +26,11 @@ const Login = () => {
   return (
     <div>
       <h2>Login</h2>
+      {errorMessage && <h3 style={{ color: "red" }}>{errorMessage}</h3>}
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Email:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label>User name:</label>
+          <input type="username" value={username} onChange={(e) => setUsername(e.target.value)} />
         </div>
         <div>
           <label>Password:</label>

@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { register } from "../api";
 
 const Register = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await register({ email, password });
+      await register({ username, password });
       navigate("/login");
     } catch (error) {
       console.error("Registration failed", error);
@@ -22,8 +22,8 @@ const Register = () => {
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Email:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label>User name:</label>
+          <input value={username} onChange={(e) => setUsername(e.target.value)} />
         </div>
         <div>
           <label>Password:</label>
